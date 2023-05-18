@@ -5,50 +5,44 @@ import java.util.Map;
 
 public class Dipendente { //Rappresenta un dipendente e ha un riferimento al ruolo associato in un unità organizzativa specifica
     private String nome;
-    private Map<UnitaOrganizzativa,Ruolo> ruoli; //In questo caso ogni dipendente può avere un solo ruolo all'interno di un unità, se si vuole assegnargli più ruoli all'interno della stessa unità basta usare come valore una lista di ruoli
-
+    private Map<UnitaOrganizzativa,Ruolo> ruoli;
 
     public Dipendente(String nome){
         this.nome=nome;
         this.ruoli=new HashMap<>();
     }
-
-    public void aggiungiAdUnita(UnitaOrganizzativa unita,Ruolo ruolo){
-        if (unita.getRuoli().contains(ruolo)) {
-            if (ruoli.containsKey(unita)) {
-                System.out.println("Il dipendente fa già parte dell'unità " + unita.getNome());
-            } else {
-                this.ruoli.put(unita, ruolo);
-                System.out.println("Dipendente aggiunto all'unità " + unita.getNome() + " con ruolo " + ruolo.getNome());
-            }
-        }else {
-            System.out.println("Il ruolo "+ruolo.getNome()+" non è presente nell'unità "+unita.getNome());
+    public void getRuoliString(){
+        System.out.println("Lista dei ruoli di "+nome);
+        for (UnitaOrganizzativa u : ruoli.keySet()){
+            System.out.println(ruoli.get(u).getNome()+" -> "+u.getNome());
         }
     }
 
-    public void rimuoviDaUnita(UnitaOrganizzativa unita){
-        if (!ruoli.containsKey(unita)){
-            System.out.println("Il dipendente non fa parte dell'unità "+unita.getNome());
-        }else {
-            this.ruoli.remove(unita);
-            System.out.println("Dipendente rimosso dall'unità "+unita.getNome());
-        }
-    }
-
-    public void modificaRuolo(UnitaOrganizzativa unita, Ruolo ruolo){
-        if (!ruoli.containsKey(unita)){
-            System.out.println("Il Dipendente non fa parte dell'unità "+unita.getNome());
-        }if (!unita.getRuoli().contains(ruolo)) {
-            System.out.println("L'unità "+unita.getNome()+" non ha il ruolo "+ruolo.getNome());
-        }else {
-            ruoli.put(unita,ruolo);
-        }
-    }
     public Map<UnitaOrganizzativa, Ruolo> getRuoli(){
         return ruoli;
     }
 
     public String getNome(){
         return nome;
+    }
+
+    public void setRuolo(UnitaOrganizzativa unita, Ruolo ruolo){
+        ruoli.put(unita,ruolo);
+    }
+
+    public void rimuoviRuolo(UnitaOrganizzativa unita){
+        ruoli.remove(unita);
+    }
+
+    public static void main(String[] args) { //TEST
+        UnitaOrganizzativa u = new UnitaOrganizzativa("Apple");
+        Ruolo r = new Ruolo("Capo");
+
+        Dipendente d = new Dipendente("Giuseppe");
+
+        u.aggiungiRuolo(r);
+        u.aggiungiDipendente(d,r);
+
+        d.getRuoliString();
     }
 }
