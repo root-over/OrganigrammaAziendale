@@ -7,6 +7,8 @@ public class UnitaOrganizzativa { // Rappresenta un unità organizzativa e le so
     private List<UnitaOrganizzativa> sottounita;
     private List<Ruolo> ruoli;
 
+    //TODO puo essere utile una lista di dipendenti che sono in una determinata unità
+
     public UnitaOrganizzativa(String nome){
         this.nome=nome;
         this.sottounita=new ArrayList<>();
@@ -32,6 +34,7 @@ public class UnitaOrganizzativa { // Rappresenta un unità organizzativa e le so
     public List<Ruolo> getRuoli() {
         return ruoli;
     }
+
 
     public String getNome() {
         return nome;
