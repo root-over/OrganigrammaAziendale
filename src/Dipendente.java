@@ -1,11 +1,9 @@
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Dipendente { //Rappresenta un dipendente e ha un riferimento al ruolo associato in un unità organizzativa specifica
-    private String nome;
-    private Map<UnitaOrganizzativa,Ruolo> ruoli;
+    private final String nome;
+    private final Map<UnitaOrganizzativa,Ruolo> ruoli;
 
     public Dipendente(String nome){
         this.nome=nome;
@@ -37,12 +35,15 @@ public class Dipendente { //Rappresenta un dipendente e ha un riferimento al ruo
     public static void main(String[] args) { //TEST
         UnitaOrganizzativa u = new UnitaOrganizzativa("Apple");
         Ruolo r = new Ruolo("Capo");
+        Ruolo r2= new Ruolo("Apprendista");
 
         Dipendente d = new Dipendente("Giuseppe");
 
         u.aggiungiRuolo(r);
         u.aggiungiDipendente(d,r);
 
+        u.aggiungiDipendente(d,r2);
+        u.modificaRuoloDipendente(d,r);
         d.getRuoliString();
     }
 }
