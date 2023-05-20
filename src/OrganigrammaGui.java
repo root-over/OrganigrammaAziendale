@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class OrganigrammaGui extends JFrame {
+public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigramma
     private final Organigramma organigramma;
 
     public OrganigrammaGui() {
@@ -65,7 +65,7 @@ public class OrganigrammaGui extends JFrame {
         visualizzaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visualizzaOrganigramma(); //TODO PASSARE COME PARAMETRO LA RADICE
+                checkOrganigramma();
             }
         });
 
@@ -96,10 +96,30 @@ public class OrganigrammaGui extends JFrame {
         setVisible(true);
     }
 
+
+    private void checkOrganigramma(){
+        if (false){//TODO se è presente il file dell'organigramma
+            //Carica il file
+            visualizzaOrganigramma(new UnitaOrganizzativa("Ciao"));//passa la radice
+        }else {
+            int scelta = JOptionPane.showOptionDialog(null,
+                    "Non è presente nessun organigramma. Vuoi crearne uno?", "Attenzione",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+            if (scelta == JOptionPane.YES_OPTION) {
+                // L'utente ha scelto di creare un organigramma
+                String nomeUnita = JOptionPane.showInputDialog(null, "Inserisci il nome della radice dell'unità organizzativa:");
+                UnitaOrganizzativa radice = new UnitaOrganizzativa(nomeUnita);
+                JOptionPane.showMessageDialog(null,"unità organizzativa creata");
+                //TODO AGGIUNGERE SALVATAGGIO Dell'organigramma
+                visualizzaOrganigramma(radice);
+
+            }
+        }
+    }
     private void visualizzaOrganigramma(UnitaOrganizzativa radice) {
-        organigramma.stampaOrganigramma();
         dispose();
-        OrganigrammaPage grafica = new OrganigrammaPage(radice);//TODO Passare la radice del grafo
+        OrganigrammaPage grafica = new OrganigrammaPage(radice);
         grafica.setVisible(true);
     }
 

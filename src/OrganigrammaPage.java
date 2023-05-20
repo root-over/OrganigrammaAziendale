@@ -5,7 +5,7 @@ import com.mxgraph.view.mxGraph;
 import javax.swing.*;
 import java.awt.*;
 
-public class OrganigrammaPage extends JFrame {
+public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico organigramma
     private mxGraph graph;
     private Object parent;
 
