@@ -7,6 +7,12 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
     private final Organigramma organigramma;
 
     public OrganigrammaGui() {
+        UIManager.put("OptionPane.background", new Color(44, 43, 43));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("OptionPane.buttonForeground", Color.WHITE);
+        UIManager.put("Panel.background", new Color(44, 43, 43));
+        UIManager.put("Button.background", new Color(92, 132, 248));
+
         // Creazione dell'organigramma di esempio
         UnitaOrganizzativa radice = new UnitaOrganizzativa("Direzione Generale");
         organigramma = new Organigramma(radice);
@@ -19,6 +25,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
 
         // Creazione dei pulsanti
         JLabel nome = new JLabel("Gestione Organigramma");
+        JButton aggiungiRuoliButton = new JButton(("Aggiungi Ruoli"));
         JButton visualizzaButton = new JButton("Visualizza Organigramma");
         JButton aggiungiDipendentiButton = new JButton("Aggiungi Dipendenti");
         JButton aggiungiUnitaButton = new JButton("Aggiungi Unità");
@@ -39,6 +46,10 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         aggiungiDipendentiButton.setBackground(new Color(92, 132, 248));
         aggiungiDipendentiButton.setForeground(Color.WHITE);
 
+        aggiungiRuoliButton.setBounds(50,300,200,40);
+        aggiungiRuoliButton.setBackground(new Color(92, 132, 248));
+        aggiungiRuoliButton.setForeground(Color.WHITE);
+
         aggiungiUnitaButton.setBounds(450,200,200,40);
         aggiungiUnitaButton.setBackground(new Color(92, 132, 248));
         aggiungiUnitaButton.setForeground(Color.WHITE);
@@ -54,6 +65,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         panel.setLayout(null);
         panel.add(nome);
         panel.add(visualizzaButton);
+        panel.add(aggiungiRuoliButton);
         panel.add(aggiungiDipendentiButton);
         panel.add(aggiungiUnitaButton);
         panel.add(esciButton);
@@ -62,6 +74,13 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         add(panel);
 
         // Aggiunta dei listener ai pulsanti
+
+        aggiungiRuoliButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO codice per aggiungere ruoli
+            }
+        });
         visualizzaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,6 +92,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
             @Override
             public void actionPerformed(ActionEvent e) {
                 aggiungiDipendenti();
+                //TODO codice per aggiunfere dipendenti
             }
         });
 
@@ -80,6 +100,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
             @Override
             public void actionPerformed(ActionEvent e) {
                 aggiungiUnita();
+                //TODO codice per aggiungere unità
             }
         });
 
@@ -98,7 +119,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
 
 
     private void checkOrganigramma(){
-        if (false){//TODO se è presente il file dell'organigramma
+        if (true){//TODO se è presente il file dell'organigramma
             //Carica il file
             visualizzaOrganigramma(new UnitaOrganizzativa("Ciao"));//passa la radice
         }else {
