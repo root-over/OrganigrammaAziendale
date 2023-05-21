@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigramma
-    private final Organigramma organigramma;
+    private final Organigramma organigramma; //TODO sarebbe interessante poter salvare le modifiche fatte direttamente nell'interfaccia grafica
 
     public OrganigrammaGui() {
         UIManager.put("OptionPane.background", new Color(44, 43, 43));
@@ -121,7 +121,21 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
     private void checkOrganigramma(){
         if (true){//TODO se è presente il file dell'organigramma
             //Carica il file
-            visualizzaOrganigramma(new UnitaOrganizzativa("Ciao"));//passa la radice
+
+
+            UnitaOrganizzativa u = new UnitaOrganizzativa("Apple");
+            UnitaOrganizzativa aa = new UnitaOrganizzativa("Cacca");
+            Organigramma o = new Organigramma(u);
+            Ruolo r = new Ruolo("Capo");
+            Ruolo r2= new Ruolo("Apprendista");
+
+            Dipendente d = new Dipendente("Giuseppe");
+            o.getRadice().aggiungiSottounita(aa);
+            u.aggiungiRuolo(r);
+            u.aggiungiDipendente(d,r);
+
+//TODO TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSST
+            visualizzaOrganigramma(new Organigramma(o.getRadice()));//passa la radice
         }else {
             int scelta = JOptionPane.showOptionDialog(null,
                     "Non è presente nessun organigramma. Vuoi crearne uno?", "Attenzione",
@@ -130,7 +144,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
             if (scelta == JOptionPane.YES_OPTION) {
                 // L'utente ha scelto di creare un organigramma
                 String nomeUnita = JOptionPane.showInputDialog(null, "Inserisci il nome della radice dell'unità organizzativa:");
-                UnitaOrganizzativa radice = new UnitaOrganizzativa(nomeUnita);
+                Organigramma radice = new Organigramma(new UnitaOrganizzativa(nomeUnita));
                 JOptionPane.showMessageDialog(null,"unità organizzativa creata");
                 //TODO AGGIUNGERE SALVATAGGIO Dell'organigramma
                 visualizzaOrganigramma(radice);
@@ -138,7 +152,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
             }
         }
     }
-    private void visualizzaOrganigramma(UnitaOrganizzativa radice) {
+    private void visualizzaOrganigramma(Organigramma radice) {
         dispose();
         OrganigrammaPage grafica = new OrganigrammaPage(radice);
         grafica.setVisible(true);
@@ -155,12 +169,15 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
     }
 
     public static void main(String[] args) {
+
         UnitaOrganizzativa u = new UnitaOrganizzativa("Apple");
+        UnitaOrganizzativa aa = new UnitaOrganizzativa("Cacca");
+        Organigramma o = new Organigramma(u);
         Ruolo r = new Ruolo("Capo");
         Ruolo r2= new Ruolo("Apprendista");
 
         Dipendente d = new Dipendente("Giuseppe");
-
+        o.getRadice().aggiungiSottounita(aa);
         u.aggiungiRuolo(r);
         u.aggiungiDipendente(d,r);
 

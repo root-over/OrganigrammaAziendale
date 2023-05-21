@@ -6,12 +6,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico organigramma
+
+    //TODO importante non scrivere il codice direttamente negli action listener ma richiamare dei metodi appositi
     private mxGraph graph;
     private Object parent;
 
-    public OrganigrammaPage(UnitaOrganizzativa rootUnit) { //TODO invece di ricevere l'unità riceve deve ricevere l'organigramma che contiene l'unità
+    public OrganigrammaPage(Organigramma rootUnit) {
         // Configurazione della finestra
         setTitle("Organigramma Aziendale");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,7 +31,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
 
         try {
             // Costruzione ricorsiva del grafo
-            buildGraph(rootUnit, null);
+            buildGraph(rootUnit.getRadice(), null);
         } finally {
             graph.getModel().endUpdate();
         }
@@ -67,7 +71,51 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         aggiungiUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<String> campiList = new ArrayList();
+                campiList.add(rootUnit.getRadice().getNome());
+                campiList.addAll(rootUnit.getRadice().getSottounitaString());
+                String[] campi = campiList.toArray(new String[0]);
+
                 //TODO codice per aggiungere unità
+                JComboBox campoComboBox = new JComboBox<>(campi);
+                JTextField nomeTextField = new JTextField(20);
+
+                JPanel panel = new JPanel();
+                panel.add(new JLabel("Seleziona un campo:"));
+                panel.add(campoComboBox);
+                panel.add(new JLabel("Inserisci un nome:"));
+                panel.add(nomeTextField);
+
+                int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String campoSelezionato = (String) campoComboBox.getSelectedItem();
+                    String nomeInserito = nomeTextField.getText();
+                    if (campoSelezionato == rootUnit.getRadice().getNome()){
+                        rootUnit.getRadice().aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
+                    }else {
+                        for(UnitaOrganizzativa unita : rootUnit.getRadice().getSottounita()){
+                            if (unita.getNome()==campoSelezionato){
+                                unita.aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
+                                buildGraph(new UnitaOrganizzativa(nomeInserito),unita); //TODO funziona bene se aggiungo una sottounit ad una sottounit che ho creato in fase di running, ma non per sottounit gia presenti
+                            }
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null,"Sottounità aggiunta");
+
+
+                    // Ricostruisco il grafico con i dati aggiornati
+                    graph.getModel().beginUpdate();
+                    try {
+                        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+                        buildGraph(rootUnit.getRadice(), null);
+                    } finally {
+                        graph.getModel().endUpdate();
+                    }
+                    mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+                    layout.execute(parent);
+                }
 
             }
         });
@@ -85,13 +133,36 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO codice per salvare modifiche
+                // Ricostruisco il grafico con i dati aggiornati
+                graph.getModel().beginUpdate();
+                try {
+                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+                    buildGraph(rootUnit.getRadice(), null);
+                } finally {
+                    graph.getModel().endUpdate();
+                }
+                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+                layout.execute(parent);
             }
+
         });
 
         rimuoviUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO codice per rimuovere unità
+
+
+                // Ricostruisco il grafico con i dati aggiornati
+                graph.getModel().beginUpdate();
+                try {
+                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+                    buildGraph(rootUnit.getRadice(), null);
+                } finally {
+                    graph.getModel().endUpdate();
+                }
+                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+                layout.execute(parent);
             }
         });
 
@@ -99,6 +170,18 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO codice per modificare unità
+
+
+                // Ricostruisco il grafico con i dati aggiornati
+                graph.getModel().beginUpdate();
+                try {
+                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+                    buildGraph(rootUnit.getRadice(), null);
+                } finally {
+                    graph.getModel().endUpdate();
+                }
+                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+                layout.execute(parent);
             }
         });
 
@@ -107,6 +190,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
 
     private void buildGraph(UnitaOrganizzativa unita, Object parentCell) {
         Object unitCell = graph.insertVertex(parent, null, unita.getNome(), 20, 20, 100, 40);

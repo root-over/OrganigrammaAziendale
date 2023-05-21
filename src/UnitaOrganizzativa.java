@@ -85,6 +85,14 @@ public class UnitaOrganizzativa { // Rappresenta un unità organizzativa e le so
         return sottounita;
     }
 
+    public List<String> getSottounitaString(){
+        ArrayList<String> a = new ArrayList<>();
+        for (UnitaOrganizzativa u : sottounita){
+            a.add(u.getNome());
+        }
+        return a;
+    }
+
     public void setIndice(int indice) {
         this.indice = indice;
     }
