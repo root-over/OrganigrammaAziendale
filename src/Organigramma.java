@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Organigramma {//Rappresenta l'organigramma aziendale, contiene le unità organizzative e gli organi di gestione
+public class Organigramma implements Serializable {//Rappresenta l'organigramma aziendale, contiene le unità organizzative e gli organi di gestione
         private final UnitaOrganizzativa radice;
         private final Map<String, UnitaOrganizzativa> mappaUnita;
 
@@ -22,8 +23,8 @@ public class Organigramma {//Rappresenta l'organigramma aziendale, contiene le u
             return radice;
         }
 
-        public UnitaOrganizzativa getUnitaPerId(String id) {
-            return mappaUnita.get(id);
+        public UnitaOrganizzativa getUnita(String nome) {
+            return mappaUnita.get(nome);
         }
 
         public void stampaOrganigramma() {

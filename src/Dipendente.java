@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Dipendente { //Rappresenta un dipendente e ha un riferimento al ruolo associato in un unità organizzativa specifica
+public class Dipendente implements Serializable { //Rappresenta un dipendente e ha un riferimento al ruolo associato in un unità organizzativa specifica
     private final String nome;
     private final Map<UnitaOrganizzativa,Ruolo> ruoli;
 

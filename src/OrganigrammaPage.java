@@ -6,12 +6,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico organigramma
 
-    //TODO importante non scrivere il codice direttamente negli action listener ma richiamare dei metodi appositi
+    //FIXME importante non scrivere il codice direttamente negli action listener ma richiamare dei metodi appositi
     private mxGraph graph;
     private Object parent;
 
@@ -76,14 +79,19 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
                 campiList.addAll(rootUnit.getRadice().getSottounitaString());
                 String[] campi = campiList.toArray(new String[0]);
 
-                //TODO codice per aggiungere unità
                 JComboBox campoComboBox = new JComboBox<>(campi);
                 JTextField nomeTextField = new JTextField(20);
 
+
+                //Finestra che contiene combobox e textfileda
                 JPanel panel = new JPanel();
-                panel.add(new JLabel("Seleziona un campo:"));
+                JLabel campoLabel = new JLabel("Seleziona un campo:");
+                campoLabel.setForeground(Color.WHITE);
+                panel.add(campoLabel);
                 panel.add(campoComboBox);
-                panel.add(new JLabel("Inserisci un nome:"));
+                JLabel nomeLabel = new JLabel("Inserisci un nome:");
+                nomeLabel.setForeground(Color.WHITE);
+                panel.add(nomeLabel);
                 panel.add(nomeTextField);
 
                 int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
@@ -98,14 +106,14 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
                         for(UnitaOrganizzativa unita : rootUnit.getRadice().getSottounita()){
                             if (unita.getNome()==campoSelezionato){
                                 unita.aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
-                                buildGraph(new UnitaOrganizzativa(nomeInserito),unita); //TODO funziona bene se aggiungo una sottounit ad una sottounit che ho creato in fase di running, ma non per sottounit gia presenti
+                                buildGraph(new UnitaOrganizzativa(nomeInserito),unita); //FIXME funziona bene se aggiungo una sottounit ad una sottounit che ho creato in fase di running, ma non per sottounit gia presenti
                             }
                         }
                     }
                     JOptionPane.showMessageDialog(null,"Sottounità aggiunta");
 
 
-                    // Ricostruisco il grafico con i dati aggiornati
+                    // Ricostruisco il grafico con i dati aggiornatix
                     graph.getModel().beginUpdate();
                     try {
                         graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
@@ -130,9 +138,27 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         });
 
         salvaButton.addActionListener(new ActionListener() {
+
+            //TODO chiedere se si vuole salvare prima di tornare indietro
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO codice per salvare modifiche
+                try {
+                    // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
+                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
+
+                    // Scrivi l'oggetto Organigramma nel file
+                    outputStream.writeObject(rootUnit);
+
+                    // Chiudi lo stream di output
+                    outputStream.close();
+
+                    System.out.println("Organigramma salvato correttamente.");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+
                 // Ricostruisco il grafico con i dati aggiornati
                 graph.getModel().beginUpdate();
                 try {
@@ -150,7 +176,37 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         rimuoviUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO codice per rimuovere unità
+                //FIXME non funziona nienteeeeeee
+
+                List<String> campiList = new ArrayList();
+                campiList.add(rootUnit.getRadice().getNome());
+                campiList.addAll(rootUnit.getRadice().getSottounitaString());
+                String[] campi = campiList.toArray(new String[0]);
+
+                JComboBox campoComboBox = new JComboBox<>(campi);
+
+
+                //Finestra che contiene combobox e textfileda
+                JPanel panel = new JPanel();
+                JLabel campoLabel = new JLabel("Seleziona l'unità da eliminare:");
+                campoLabel.setForeground(Color.WHITE);
+                panel.add(campoLabel);
+                panel.add(campoComboBox);
+
+                int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String campoSelezionato = (String) campoComboBox.getSelectedItem();
+
+                    if (campoSelezionato==rootUnit.getRadice().getNome()){
+                        System.out.println("Non puoi rimuovere la radice");
+                        JOptionPane.showMessageDialog(null,"Non puoi rimuovere la radice");
+                    }else {
+                        rootUnit.getRadice().rimuoviSottounita(rootUnit.getUnita(campoSelezionato));
+                        JOptionPane.showMessageDialog(null, "Sottounità rimossa");
+                    }
+                }
 
 
                 // Ricostruisco il grafico con i dati aggiornati
@@ -201,5 +257,6 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         for (UnitaOrganizzativa subUnit : unita.getSottounita()) {
             buildGraph(subUnit, unitCell);
         }
+
+        }
     }
-}

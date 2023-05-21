@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UnitaOrganizzativa { // Rappresenta un unità organizzativa e le sottounità organizzative
+public class UnitaOrganizzativa implements Serializable { // Rappresenta un unità organizzativa e le sottounità organizzative
 
     private final String nome;
     private final List<UnitaOrganizzativa> sottounita;
@@ -93,11 +94,5 @@ public class UnitaOrganizzativa { // Rappresenta un unità organizzativa e le so
         return a;
     }
 
-    public void setIndice(int indice) {
-        this.indice = indice;
-    }
 
-    public int getIndice() {
-        return indice;
-    }
 }
