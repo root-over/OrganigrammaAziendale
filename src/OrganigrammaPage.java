@@ -9,14 +9,12 @@ import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico organigramma
 
-    //FIXME importante non scrivere il codice direttamente negli action listener ma richiamare dei metodi appositi
-    private mxGraph graph;
-    private Object parent;
+    private final mxGraph graph;
+    private final Object parent;
 
     public OrganigrammaPage(Organigramma rootUnit) {
         // Configurazione della finestra
@@ -74,170 +72,34 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         aggiungiUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<String> campiList = new ArrayList();
-                campiList.add(rootUnit.getRadice().getNome());
-                campiList.addAll(rootUnit.getRadice().getSottounitaString());
-                String[] campi = campiList.toArray(new String[0]);
-
-                JComboBox campoComboBox = new JComboBox<>(campi);
-                JTextField nomeTextField = new JTextField(20);
-
-
-                //Finestra che contiene combobox e textfileda
-                JPanel panel = new JPanel();
-                JLabel campoLabel = new JLabel("Seleziona un campo:");
-                campoLabel.setForeground(Color.WHITE);
-                panel.add(campoLabel);
-                panel.add(campoComboBox);
-                JLabel nomeLabel = new JLabel("Inserisci un nome:");
-                nomeLabel.setForeground(Color.WHITE);
-                panel.add(nomeLabel);
-                panel.add(nomeTextField);
-
-                int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-
-                if (result == JOptionPane.OK_OPTION) {
-                    String campoSelezionato = (String) campoComboBox.getSelectedItem();
-                    String nomeInserito = nomeTextField.getText();
-                    if (campoSelezionato == rootUnit.getRadice().getNome()){
-                        rootUnit.getRadice().aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
-                    }else {
-                        for(UnitaOrganizzativa unita : rootUnit.getRadice().getSottounita()){
-                            if (unita.getNome()==campoSelezionato){
-                                unita.aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
-                                buildGraph(new UnitaOrganizzativa(nomeInserito),unita); //FIXME funziona bene se aggiungo una sottounit ad una sottounit che ho creato in fase di running, ma non per sottounit gia presenti
-                            }
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null,"Sottounità aggiunta");
-
-
-                    // Ricostruisco il grafico con i dati aggiornatix
-                    graph.getModel().beginUpdate();
-                    try {
-                        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-                        buildGraph(rootUnit.getRadice(), null);
-                    } finally {
-                        graph.getModel().endUpdate();
-                    }
-                    mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-                    layout.execute(parent);
-                }
-
+                aggiungiUnita(rootUnit);
             }
         });
 
         indietroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
-                OrganigrammaGui main = new OrganigrammaGui();
-                main.setVisible(true);
+                indietro(rootUnit);
             }
         });
-
         salvaButton.addActionListener(new ActionListener() {
-
-            //TODO chiedere se si vuole salvare prima di tornare indietro
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
-                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
-
-                    // Scrivi l'oggetto Organigramma nel file
-                    outputStream.writeObject(rootUnit);
-
-                    // Chiudi lo stream di output
-                    outputStream.close();
-
-                    System.out.println("Organigramma salvato correttamente.");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-
-                // Ricostruisco il grafico con i dati aggiornati
-                graph.getModel().beginUpdate();
-                try {
-                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-                    buildGraph(rootUnit.getRadice(), null);
-                } finally {
-                    graph.getModel().endUpdate();
-                }
-                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-                layout.execute(parent);
+                salvataggio(rootUnit);
             }
 
         });
-
         rimuoviUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //FIXME non funziona nienteeeeeee
-
-                List<String> campiList = new ArrayList();
-                campiList.add(rootUnit.getRadice().getNome());
-                campiList.addAll(rootUnit.getRadice().getSottounitaString());
-                String[] campi = campiList.toArray(new String[0]);
-
-                JComboBox campoComboBox = new JComboBox<>(campi);
-
-
-                //Finestra che contiene combobox e textfileda
-                JPanel panel = new JPanel();
-                JLabel campoLabel = new JLabel("Seleziona l'unità da eliminare:");
-                campoLabel.setForeground(Color.WHITE);
-                panel.add(campoLabel);
-                panel.add(campoComboBox);
-
-                int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-
-                if (result == JOptionPane.OK_OPTION) {
-                    String campoSelezionato = (String) campoComboBox.getSelectedItem();
-
-                    if (campoSelezionato==rootUnit.getRadice().getNome()){
-                        System.out.println("Non puoi rimuovere la radice");
-                        JOptionPane.showMessageDialog(null,"Non puoi rimuovere la radice");
-                    }else {
-                        rootUnit.getRadice().rimuoviSottounita(rootUnit.getUnita(campoSelezionato));
-                        JOptionPane.showMessageDialog(null, "Sottounità rimossa");
-                    }
-                }
-
-
-                // Ricostruisco il grafico con i dati aggiornati
-                graph.getModel().beginUpdate();
-                try {
-                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-                    buildGraph(rootUnit.getRadice(), null);
-                } finally {
-                    graph.getModel().endUpdate();
-                }
-                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-                layout.execute(parent);
+                rimuoviUnita(rootUnit);
             }
         });
 
         modificaUnitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO codice per modificare unità
-
-
-                // Ricostruisco il grafico con i dati aggiornati
-                graph.getModel().beginUpdate();
-                try {
-                    graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-                    buildGraph(rootUnit.getRadice(), null);
-                } finally {
-                    graph.getModel().endUpdate();
-                }
-                mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-                layout.execute(parent);
+                modificaUnita(rootUnit);
             }
         });
 
@@ -245,6 +107,196 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void indietro(Organigramma rootUnit){
+        int scelta = JOptionPane.showOptionDialog(null,
+                "Vuoi salvare prima di uscire? ", "Attenzione",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (scelta == JOptionPane.YES_OPTION) {
+            try {
+                // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
+                ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
+
+                // Scrivi l'oggetto Organigramma nel file
+                outputStream.writeObject(rootUnit);
+
+                // Chiudi lo stream di output
+                outputStream.close();
+
+                System.out.println("Organigramma salvato correttamente.");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            dispose();
+            OrganigrammaGui main = new OrganigrammaGui();
+            main.setVisible(true);
+        }
+    }
+
+    private void rimuoviUnita(Organigramma rootUnit){
+        List<String> unitaNomi = rootUnit.getNomiOrganigramma(rootUnit.getRadice());
+
+        String[] campi = unitaNomi.toArray(new String[0]);
+
+        JComboBox<String> campoComboBox = new JComboBox<>(campi);
+
+
+        //Finestra che contiene combobox e textfileda
+        JPanel panel = new JPanel();
+        JLabel campoLabel = new JLabel("Seleziona l'unità da eliminare:");
+        campoLabel.setForeground(Color.WHITE);
+        panel.add(campoLabel);
+        panel.add(campoComboBox);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String campoSelezionato = (String) campoComboBox.getSelectedItem();
+            if (rootUnit.trovaUnitaPerNome(campoSelezionato)==rootUnit.getRadice()){
+                JOptionPane.showMessageDialog(null,"Non puoi eliminare la radice dell' organigramma");
+            }else {
+
+                int scelta = JOptionPane.showOptionDialog(null,
+                        "Cliccando su Yes verrà eliminata l'unità con le sottounità ad essa associate", "Attenzione",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+                if (scelta == JOptionPane.YES_OPTION) {
+                    rootUnit.eliminaUnita(rootUnit.trovaUnitaPerNome(campoSelezionato));
+                }
+            }
+        }
+
+
+        // Ricostruisco il grafico con i dati aggiornati
+        graph.getModel().beginUpdate();
+        try {
+            graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+            buildGraph(rootUnit.getRadice(), null);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.execute(parent);
+    }
+
+    private void salvataggio(Organigramma rootUnit){
+        try {
+            // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
+
+            // Scrivi l'oggetto Organigramma nel file
+            outputStream.writeObject(rootUnit);
+
+            // Chiudi lo stream di output
+            outputStream.close();
+
+            System.out.println("Organigramma salvato correttamente.");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+
+        // Ricostruisco il grafico con i dati aggiornati
+        graph.getModel().beginUpdate();
+        try {
+            graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+            buildGraph(rootUnit.getRadice(), null);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.execute(parent);
+    }
+
+    private void aggiungiUnita(Organigramma rootUnit){
+        List<String> unitaNomi = rootUnit.getNomiOrganigramma(rootUnit.getRadice());
+
+        String[] campi = unitaNomi.toArray(new String[0]);
+
+        JComboBox<String> campoComboBox = new JComboBox<>(campi);
+        JTextField nomeTextField = new JTextField(20);
+
+
+        //Finestra che contiene combobox e textfileda
+        JPanel panel = new JPanel();
+        JLabel campoLabel = new JLabel("Seleziona un campo:");
+        campoLabel.setForeground(Color.WHITE);
+        panel.add(campoLabel);
+        panel.add(campoComboBox);
+        JLabel nomeLabel = new JLabel("Inserisci un nome:");
+        nomeLabel.setForeground(Color.WHITE);
+        panel.add(nomeLabel);
+        panel.add(nomeTextField);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String campoSelezionato = (String) campoComboBox.getSelectedItem();
+            String nomeInserito = nomeTextField.getText();
+            System.out.println(campoSelezionato);
+            rootUnit.trovaUnitaPerNome(campoSelezionato).aggiungiSottounita(new UnitaOrganizzativa(nomeInserito));
+        }
+
+
+        // Ricostruisco il grafico con i dati aggiornatix
+        graph.getModel().beginUpdate();
+        try {
+            graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+            buildGraph(rootUnit.getRadice(), null);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.execute(parent);
+    }
+
+    private void modificaUnita(Organigramma rootUnit){
+        //codice per modificare unità
+
+        List<String> unitaNomi = rootUnit.getNomiOrganigramma(rootUnit.getRadice());
+
+        String[] campi = unitaNomi.toArray(new String[0]);
+
+        JComboBox<String> campoComboBox = new JComboBox<>(campi);
+        JTextField nomeTextField = new JTextField(20);
+
+
+        //Finestra che contiene combobox e textfileda
+        JPanel panel = new JPanel();
+        JLabel campoLabel = new JLabel("Seleziona campo da modificare:");
+        campoLabel.setForeground(Color.WHITE);
+        panel.add(campoLabel);
+        panel.add(campoComboBox);
+        JLabel nomeLabel = new JLabel("Inserisci il nuovo nome:");
+        nomeLabel.setForeground(Color.WHITE);
+        panel.add(nomeLabel);
+        panel.add(nomeTextField);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String campoSelezionato = (String) campoComboBox.getSelectedItem();
+            String nomeInserito = nomeTextField.getText();
+            rootUnit.trovaUnitaPerNome(campoSelezionato).setNome(nomeInserito);
+        }
+
+
+        // Ricostruisco il grafico con i dati aggiornati
+        graph.getModel().beginUpdate();
+        try {
+            graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+            buildGraph(rootUnit.getRadice(), null);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.execute(parent);
     }
 
 

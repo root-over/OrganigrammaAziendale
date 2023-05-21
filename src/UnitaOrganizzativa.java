@@ -6,11 +6,10 @@ import java.util.Map;
 
 public class UnitaOrganizzativa implements Serializable { // Rappresenta un unità organizzativa e le sottounità organizzative
 
-    private final String nome;
+    private String nome;
     private final List<UnitaOrganizzativa> sottounita;
     private final List<Ruolo> ruoli;
     private final Map<Dipendente, Ruolo> dipendenti; // Ogni dipendente può avere al più un ruolo all'interno di un'unità organizzativa
-    private int indice; // Indice dell'unità organizzativa nell'organigramma
 
     public UnitaOrganizzativa(String nome) {
         this.nome = nome;
@@ -80,6 +79,10 @@ public class UnitaOrganizzativa implements Serializable { // Rappresenta un unit
 
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome){
+        this.nome=nome;
     }
 
     public List<UnitaOrganizzativa> getSottounita() {

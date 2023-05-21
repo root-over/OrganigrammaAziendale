@@ -1,37 +1,86 @@
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Organigramma implements Serializable {//Rappresenta l'organigramma aziendale, contiene le unità organizzative e gli organi di gestione
         private final UnitaOrganizzativa radice;
-        private final Map<String, UnitaOrganizzativa> mappaUnita;
+
 
         public Organigramma(UnitaOrganizzativa radice) {
             this.radice = radice;
-            this.mappaUnita = new HashMap<>();
-            costruisciMappaUnita(radice);
         }
 
-        private void costruisciMappaUnita(UnitaOrganizzativa unita) {
-            mappaUnita.put(unita.getNome(), unita);
-            for (UnitaOrganizzativa sottounita : unita.getSottounita()) {
-                costruisciMappaUnita(sottounita);
+    public UnitaOrganizzativa trovaUnitaPerNome(String nomeUnita) {
+        return trovaUnitaPerNomeRicorsivo(radice, nomeUnita);
+    }
+
+    private UnitaOrganizzativa trovaUnitaPerNomeRicorsivo(UnitaOrganizzativa unita, String nomeUnita) {
+        if (unita.getNome().equals(nomeUnita)) {
+            return unita;
+        }
+
+        for (UnitaOrganizzativa sottounita : unita.getSottounita()) {
+            UnitaOrganizzativa risultato = trovaUnitaPerNomeRicorsivo(sottounita, nomeUnita);
+            if (risultato != null) {
+                return risultato;
             }
         }
 
-        public UnitaOrganizzativa getRadice() {
+        return null;
+    }
+
+    public void eliminaUnita(UnitaOrganizzativa unitaDaEliminare) {
+        eliminaUnitaRicorsivo(radice, unitaDaEliminare);
+    }
+
+    private void eliminaUnitaRicorsivo(UnitaOrganizzativa unitaCorrente, UnitaOrganizzativa unitaDaEliminare) {
+        unitaCorrente.rimuoviSottounita(unitaDaEliminare);
+
+        for (UnitaOrganizzativa sottounita : new ArrayList<>(unitaCorrente.getSottounita())) {
+            if (sottounita.equals(unitaDaEliminare)) {
+                unitaCorrente.rimuoviSottounita(sottounita);
+            } else {
+                eliminaUnitaRicorsivo(sottounita, unitaDaEliminare);
+            }
+        }
+    }
+
+
+
+    public UnitaOrganizzativa getRadice() {
             return radice;
         }
 
-        public UnitaOrganizzativa getUnita(String nome) {
-            return mappaUnita.get(nome);
-        }
+    public List<UnitaOrganizzativa> getOrganigrammi(UnitaOrganizzativa radice) {
+        List<UnitaOrganizzativa> organigrammi = new ArrayList<>();
+        organigrammi.add(radice);
+        getOrganigrammiRicorsivo(radice, organigrammi);
+        return organigrammi;
+    }
 
-        public void stampaOrganigramma() {
-            stampaOrganigramma(radice, 0);
+    private void getOrganigrammiRicorsivo(UnitaOrganizzativa unita, List<UnitaOrganizzativa> organigrammi) {
+        for (UnitaOrganizzativa sottounita : unita.getSottounita()) {
+            organigrammi.add(sottounita);
+            getOrganigrammiRicorsivo(sottounita, organigrammi);
         }
+    }
 
-        private void stampaOrganigramma(UnitaOrganizzativa unita, int livello) {
+    public List<String> getNomiOrganigramma(UnitaOrganizzativa radice) {
+        List<String> nomiOrganigramma = new ArrayList<>();
+        getNomiOrganigrammaRicorsivo(radice, nomiOrganigramma);
+        return nomiOrganigramma;
+    }
+
+    private void getNomiOrganigrammaRicorsivo(UnitaOrganizzativa unita, List<String> nomiOrganigramma) {
+        nomiOrganigramma.add(unita.getNome());
+        for (UnitaOrganizzativa sottounita : unita.getSottounita()) {
+            getNomiOrganigrammaRicorsivo(sottounita, nomiOrganigramma);
+        }
+    }
+
+
+
+    private void stampaOrganigramma(UnitaOrganizzativa unita, int livello) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < livello; i++) {
                 sb.append("\t");
