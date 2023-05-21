@@ -125,7 +125,6 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
                 // Chiudi lo stream di output
                 outputStream.close();
 
-                System.out.println("Organigramma salvato correttamente.");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -193,7 +192,6 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
             // Chiudi lo stream di output
             outputStream.close();
 
-            System.out.println("Organigramma salvato correttamente.");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

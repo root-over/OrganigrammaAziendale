@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigramma
-    private Organigramma organigramma; //TODO sarebbe interessante poter salvare le modifiche fatte direttamente nell'interfaccia grafica
+    private Organigramma organigramma;
 
 
 
@@ -27,7 +27,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         JButton aggiungiRuoliButton = new JButton(("Aggiungi Ruoli"));
         JButton visualizzaButton = new JButton("Visualizza Organigramma");
         JButton aggiungiDipendentiButton = new JButton("Aggiungi Dipendenti");
-        JButton aggiungiUnitaButton = new JButton("Aggiungi Unità");
         JButton esciButton = new JButton("Esci");
 
         //Posizionamento componenti nel pannello
@@ -38,20 +37,14 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         visualizzaButton.setBounds(250,120, 200,40);
         visualizzaButton.setBackground(new Color(92, 132, 248));
         visualizzaButton.setForeground(Color.WHITE);
-        //TODO mettere bordi arrotondati pulsanti
-        //TODO mettere bordo nero al testo dei pulsanti
+
+        aggiungiRuoliButton.setBounds(450,200,200,40);
+        aggiungiRuoliButton.setBackground(new Color(92, 132, 248));
+        aggiungiRuoliButton.setForeground(Color.WHITE);
 
         aggiungiDipendentiButton.setBounds(50,200,200,40);
         aggiungiDipendentiButton.setBackground(new Color(92, 132, 248));
         aggiungiDipendentiButton.setForeground(Color.WHITE);
-
-        aggiungiRuoliButton.setBounds(50,300,200,40);
-        aggiungiRuoliButton.setBackground(new Color(92, 132, 248));
-        aggiungiRuoliButton.setForeground(Color.WHITE);
-
-        aggiungiUnitaButton.setBounds(450,200,200,40);
-        aggiungiUnitaButton.setBackground(new Color(92, 132, 248));
-        aggiungiUnitaButton.setForeground(Color.WHITE);
 
         esciButton.setBounds(580,430,100,40);
         esciButton.setBackground(new Color(245, 48, 48));
@@ -66,7 +59,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         panel.add(visualizzaButton);
         panel.add(aggiungiRuoliButton);
         panel.add(aggiungiDipendentiButton);
-        panel.add(aggiungiUnitaButton);
         panel.add(esciButton);
 
         // Aggiunta del pannello alla finestra
@@ -77,7 +69,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         aggiungiRuoliButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO codice per aggiungere ruoli
+                checkOrganigrammaRuol();
             }
         });
         visualizzaButton.addActionListener(new ActionListener() {
@@ -90,16 +82,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         aggiungiDipendentiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                aggiungiDipendenti();
-                //TODO codice per aggiunfere dipendenti
-            }
-        });
-
-        aggiungiUnitaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                aggiungiUnita();
-                //TODO codice per aggiungere unità
+                checkOrganigrammaDip();
             }
         });
 
@@ -137,7 +120,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
                 // Ad esempio, assegna l'organigramma caricato al tuo oggetto organigramma esistente
                 organigramma = loadedOrganigramma;
 
-                System.out.println("Organigramma caricato correttamente.");
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -152,7 +134,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
                 // L'utente ha scelto di creare un organigramma
                 String nomeUnita = JOptionPane.showInputDialog(null, "Inserisci il nome della radice dell'unità organizzativa:");
                 Organigramma organigramma1 = new Organigramma(new UnitaOrganizzativa(nomeUnita));
-                JOptionPane.showMessageDialog(null,"unità organizzativa creata");
 
                 try {
                     // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
@@ -164,12 +145,123 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
                     // Chiudi lo stream di output
                     outputStream.close();
 
-                    System.out.println("Organigramma salvato correttamente.");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
 
                 visualizzaOrganigramma(organigramma1);
+
+            }
+        }
+    }
+
+    private void checkOrganigrammaDip(){
+
+        String filePath = "/home/root_over/Documenti/SynologyDrive/Università/Anno 2/Ingegneria del software/ProgettoNew/untitled/organigramma_data.bin";
+        File file = new File(filePath);
+
+
+        if (file.exists()){
+            try {
+                // Crea un oggetto ObjectInputStream per leggere l'oggetto Organigramma dal file
+                ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("organigramma_data.bin"));
+
+                // Leggi l'oggetto Organigramma dal file
+                Organigramma loadedOrganigramma = (Organigramma) inputStream.readObject();
+
+                // Chiudi lo stream di input
+                inputStream.close();
+
+                // Utilizza l'organigramma caricato come desiderato
+                // Ad esempio, assegna l'organigramma caricato al tuo oggetto organigramma esistente
+                organigramma = loadedOrganigramma;
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            aggiungiDipendenti(organigramma);//passa la radice
+        }else {
+            int scelta = JOptionPane.showOptionDialog(null,
+                    "Non è presente nessun organigramma. Vuoi crearne uno?", "Attenzione",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+            if (scelta == JOptionPane.YES_OPTION) {
+                // L'utente ha scelto di creare un organigramma
+                String nomeUnita = JOptionPane.showInputDialog(null, "Inserisci il nome della radice dell'unità organizzativa:");
+                Organigramma organigramma1 = new Organigramma(new UnitaOrganizzativa(nomeUnita));
+
+                try {
+                    // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
+                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
+
+                    // Scrivi l'oggetto Organigramma nel file
+                    outputStream.writeObject(organigramma1);
+
+                    // Chiudi lo stream di output
+                    outputStream.close();
+
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                aggiungiDipendenti(organigramma1);
+
+            }
+        }
+    }
+
+    private void checkOrganigrammaRuol(){
+        String filePath = "/home/root_over/Documenti/SynologyDrive/Università/Anno 2/Ingegneria del software/ProgettoNew/untitled/organigramma_data.bin";
+        File file = new File(filePath);
+
+
+        if (file.exists()){
+            try {
+                // Crea un oggetto ObjectInputStream per leggere l'oggetto Organigramma dal file
+                ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("organigramma_data.bin"));
+
+                // Leggi l'oggetto Organigramma dal file
+                Organigramma loadedOrganigramma = (Organigramma) inputStream.readObject();
+
+                // Chiudi lo stream di input
+                inputStream.close();
+
+                // Utilizza l'organigramma caricato come desiderato
+                // Ad esempio, assegna l'organigramma caricato al tuo oggetto organigramma esistente
+                organigramma = loadedOrganigramma;
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            aggiungiRuolo(organigramma);//passa la radice
+        }else {
+            //TODO invece di ripetere lo stesso codice si può creare un metodo che implementa il codice ripetuto
+            int scelta = JOptionPane.showOptionDialog(null,
+                    "Non è presente nessun organigramma. Vuoi crearne uno?", "Attenzione",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+            if (scelta == JOptionPane.YES_OPTION) {
+                // L'utente ha scelto di creare un organigramma
+                String nomeUnita = JOptionPane.showInputDialog(null, "Inserisci il nome della radice dell'unità organizzativa:");
+                Organigramma organigramma1 = new Organigramma(new UnitaOrganizzativa(nomeUnita));
+
+                try {
+                    // Crea un oggetto ObjectOutputStream per scrivere l'oggetto Organigramma su un file
+                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("organigramma_data.bin"));
+
+                    // Scrivi l'oggetto Organigramma nel file
+                    outputStream.writeObject(organigramma1);
+
+                    // Chiudi lo stream di output
+                    outputStream.close();
+
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                aggiungiRuolo(organigramma1);
 
             }
         }
@@ -180,32 +272,16 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         grafica.setVisible(true);
     }
 
-    private void aggiungiDipendenti() {
+    private void aggiungiDipendenti(Organigramma radice) {
         // Implementa la logica per aggiungere i dipendenti all'organigramma
-        JOptionPane.showMessageDialog(this, "Funzionalità non implementata.", "Aggiungi Dipendenti", JOptionPane.INFORMATION_MESSAGE);
+        //TODO pagina che chiede di selezionare l'unita(Combobox) in cui inserire il dipendente, il nome(testo) e il ruolo(combobox)
     }
 
-    private void aggiungiUnita() {
-        // Implementa la logica per aggiungere le unità organizzative all'organigramma
-        JOptionPane.showMessageDialog(this, "Funzionalità non implementata.", "Aggiungi Unità", JOptionPane.INFORMATION_MESSAGE);
+    private void aggiungiRuolo(Organigramma radice){
+        //TODO pagina che chiede di selezionare l'unita su cui aggiungere il ruolo e il nome del ruolo
     }
 
     public static void main(String[] args) {
-
-        UnitaOrganizzativa u = new UnitaOrganizzativa("Apple");
-        UnitaOrganizzativa aa = new UnitaOrganizzativa("Cacca");
-        Organigramma o = new Organigramma(u);
-        Ruolo r = new Ruolo("Capo");
-        Ruolo r2= new Ruolo("Apprendista");
-
-        Dipendente d = new Dipendente("Giuseppe");
-        o.getRadice().aggiungiSottounita(aa);
-        u.aggiungiRuolo(r);
-        u.aggiungiDipendente(d,r);
-
-        u.aggiungiDipendente(d,r2);
-        u.modificaRuoloDipendente(d,r);
-        d.getRuoliString();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new OrganigrammaGui();
