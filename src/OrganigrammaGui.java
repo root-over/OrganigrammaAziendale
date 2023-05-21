@@ -7,8 +7,7 @@ import java.io.*;
 public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigramma
     private Organigramma organigramma; //TODO sarebbe interessante poter salvare le modifiche fatte direttamente nell'interfaccia grafica
 
-    //FIXME ogni volta che viene richiamata questa classe l'unità radice viene riscritta, per questo non viene salvato
-    //TODO serve mettere nella variabile organigramma l'organigramma che viene salvato
+
 
     public OrganigrammaGui() {
         UIManager.put("OptionPane.background", new Color(44, 43, 43));
@@ -16,11 +15,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         UIManager.put("OptionPane.buttonForeground", Color.WHITE);
         UIManager.put("Panel.background", new Color(44, 43, 43));
         UIManager.put("Button.background", new Color(92, 132, 248));
-
-        // Creazione dell'organigramma di esempio
-        //FIXME temporaneo
-        UnitaOrganizzativa radice = new UnitaOrganizzativa("Direzione Generale");
-        organigramma = new Organigramma(radice);
 
         // Configurazione della finestra
         setTitle("Gestione Organigramma");
@@ -128,7 +122,7 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         File file = new File(filePath);
 
 
-        if (file.exists()){//TODO se è presente il file dell'organigramma
+        if (file.exists()){
             try {
                 // Crea un oggetto ObjectInputStream per leggere l'oggetto Organigramma dal file
                 ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("organigramma_data.bin"));
@@ -148,7 +142,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
                 e.printStackTrace();
             }
 
-//TODO TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSST
             visualizzaOrganigramma(organigramma);//passa la radice
         }else {
             int scelta = JOptionPane.showOptionDialog(null,

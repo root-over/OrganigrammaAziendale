@@ -129,11 +129,10 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-
-            dispose();
-            OrganigrammaGui main = new OrganigrammaGui();
-            main.setVisible(true);
         }
+        dispose();
+        OrganigrammaGui main = new OrganigrammaGui();
+        main.setVisible(true);
     }
 
     private void rimuoviUnita(Organigramma rootUnit){
