@@ -21,6 +21,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         setTitle("Organigramma Aziendale");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
+        //TODO centrare il grafo nella finestra
 
         // Creazione del grafo
         graph = new mxGraph();

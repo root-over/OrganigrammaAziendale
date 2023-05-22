@@ -3,12 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.List;
 
 public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigramma
     private Organigramma organigramma;
 
 
-
+//TODO pulsante rimuovi dipendente e rimuovi ruolo
     public OrganigrammaGui() {
         UIManager.put("OptionPane.background", new Color(44, 43, 43));
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
@@ -237,7 +238,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
 
             aggiungiRuolo(organigramma);//passa la radice
         }else {
-            //TODO invece di ripetere lo stesso codice si può creare un metodo che implementa il codice ripetuto
             int scelta = JOptionPane.showOptionDialog(null,
                     "Non è presente nessun organigramma. Vuoi crearne uno?", "Attenzione",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -272,13 +272,76 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         grafica.setVisible(true);
     }
 
-    private void aggiungiDipendenti(Organigramma radice) {
-        // Implementa la logica per aggiungere i dipendenti all'organigramma
-        //TODO pagina che chiede di selezionare l'unita(Combobox) in cui inserire il dipendente, il nome(testo) e il ruolo(combobox)
+    private void aggiungiDipendenti(Organigramma organigramma) {
+        List<String> unitaNomi = organigramma.getNomiOrganigramma(organigramma.getRadice());
+        List<Ruolo> unitaRuoli;
+
+        String[] campi = unitaNomi.toArray(new String[0]);
+        Ruolo[] ruoli = new Ruolo[0];
+
+        JComboBox<String> campoComboBox = new JComboBox<>(campi);
+        JTextField nomeTextField = new JTextField(20);
+        JComboBox<Ruolo> ruoloComboBox = new JComboBox<>(ruoli);
+
+
+        //Finestra che contiene combobox e textfileda
+        JPanel panel = new JPanel();
+        JLabel campoLabel = new JLabel("Seleziona un campo:");
+        campoLabel.setForeground(Color.WHITE);
+        panel.add(campoLabel);
+        panel.add(campoComboBox);
+        JLabel nomeLabel = new JLabel("Inserisci un nome:");
+        nomeLabel.setForeground(Color.WHITE);
+        panel.add(nomeLabel);
+        panel.add(nomeTextField);
+        JLabel ruoloLabel = new JLabel("Seleziona il ruolo:");
+        ruoloLabel.setForeground(Color.WHITE);
+        panel.add(ruoloLabel);
+        panel.add(ruoloComboBox);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        //FIXME penso non vada perchè la combo box dei ruoli non viene aggiornata con i ruoli presenti nel unita
+        if (result == JOptionPane.OK_OPTION) {
+            String campoSelezionato = (String) campoComboBox.getSelectedItem();
+            String nomeInserito = nomeTextField.getText();
+            Ruolo ruoloSelezionato=(Ruolo) ruoloComboBox.getSelectedItem();
+            unitaRuoli=organigramma.trovaUnitaPerNome(campoSelezionato).getRuoli();
+            ruoli=unitaRuoli.toArray(new Ruolo[0]);
+            organigramma.trovaUnitaPerNome(campoSelezionato).aggiungiDipendente(new Dipendente(nomeInserito),ruoloSelezionato);
+        }
     }
 
-    private void aggiungiRuolo(Organigramma radice){
-        //TODO pagina che chiede di selezionare l'unita su cui aggiungere il ruolo e il nome del ruolo
+    private void aggiungiRuolo(Organigramma organigramma){
+        List<String> unitaNomi = organigramma.getNomiOrganigramma(organigramma.getRadice());
+
+        String[] campi = unitaNomi.toArray(new String[0]);
+
+        JComboBox<String> campoComboBox = new JComboBox<>(campi);
+        JTextField nomeTextField = new JTextField(20);
+
+
+        //Finestra che contiene combobox e textfileda
+        JPanel panel = new JPanel();
+        JLabel campoLabel = new JLabel("Seleziona un campo:");
+        campoLabel.setForeground(Color.WHITE);
+        panel.add(campoLabel);
+        panel.add(campoComboBox);
+        JLabel nomeLabel = new JLabel("Inserisci un nome ruolo:");
+        nomeLabel.setForeground(Color.WHITE);
+        panel.add(nomeLabel);
+        panel.add(nomeTextField);
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String campoSelezionato = (String) campoComboBox.getSelectedItem();
+            String nomeInserito = nomeTextField.getText();
+            organigramma.trovaUnitaPerNome(campoSelezionato).aggiungiRuolo(new Ruolo(nomeInserito));
+            System.out.println(organigramma.trovaUnitaPerNome(campoSelezionato).getRuoliString());
+        }
+        //FIXME la lista dei ruoli dell'unita non si aggiorna
     }
 
     public static void main(String[] args) {

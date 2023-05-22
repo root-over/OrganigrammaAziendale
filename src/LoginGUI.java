@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoginGUI extends JFrame {
-    private JTextField usernameField;
-    private JPasswordField passwordField;
+    private final JTextField usernameField;
+    private final JPasswordField passwordField;
 //TODO AGGIUNGERE DIVERSI UTENTI E OGNI UTENTE HA DEI PERMESSI 
     public LoginGUI() {
         // Configurazione della finestra di login

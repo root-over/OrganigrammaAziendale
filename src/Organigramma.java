@@ -81,12 +81,9 @@ public class Organigramma implements Serializable {//Rappresenta l'organigramma 
 
 
     private void stampaOrganigramma(UnitaOrganizzativa unita, int livello) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < livello; i++) {
-                sb.append("\t");
-            }
-            sb.append(unita.getNome());
-            System.out.println(sb.toString());
+        String sb = "\t".repeat(Math.max(0, livello)) +
+                unita.getNome();
+            System.out.println(sb);
 
             for (UnitaOrganizzativa sottounita : unita.getSottounita()) {
                 stampaOrganigramma(sottounita, livello + 1);

@@ -77,6 +77,14 @@ public class UnitaOrganizzativa implements Serializable { // Rappresenta un unit
         return ruoli;
     }
 
+    public List<String> getRuoliString(){
+        ArrayList<String> a = new ArrayList<>();
+        for (Ruolo r : ruoli){
+            a.add(r.getNome());
+        }
+        return a;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -95,6 +103,13 @@ public class UnitaOrganizzativa implements Serializable { // Rappresenta un unit
             a.add(u.getNome());
         }
         return a;
+    }
+
+    public static void main(String[] args) {
+        UnitaOrganizzativa u = new UnitaOrganizzativa("Ciao");
+        u.aggiungiRuolo(new Ruolo("Ciaooo"));
+        u.aggiungiRuolo(new Ruolo("GDGSJADJ"));
+        System.out.println(u.getRuoliString());
     }
 
 
