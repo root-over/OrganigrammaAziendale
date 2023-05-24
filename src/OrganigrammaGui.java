@@ -25,9 +25,11 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
 
         // Creazione dei pulsanti
         JLabel nome = new JLabel("Gestione Organigramma");
-        JButton aggiungiRuoliButton = new JButton(("Aggiungi Ruoli"));
+        JButton aggiungiRuoliButton = new JButton("Aggiungi Ruoli");
+        JButton rimuoviRuoliButton=new JButton("Rimuovi Ruoli");
         JButton visualizzaButton = new JButton("Visualizza Organigramma");
         JButton aggiungiDipendentiButton = new JButton("Aggiungi Dipendenti");
+        JButton rimuoviDipendentiButton=new JButton("Rimuovi Dipendenti");
         JButton esciButton = new JButton("Esci");
 
         //Posizionamento componenti nel pannello
@@ -43,9 +45,17 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         aggiungiRuoliButton.setBackground(new Color(92, 132, 248));
         aggiungiRuoliButton.setForeground(Color.WHITE);
 
+        rimuoviRuoliButton.setBounds(450,300,200,40);
+        rimuoviRuoliButton.setBackground(new Color(92, 132, 248));
+        rimuoviRuoliButton.setForeground(Color.WHITE);
+
         aggiungiDipendentiButton.setBounds(50,200,200,40);
         aggiungiDipendentiButton.setBackground(new Color(92, 132, 248));
         aggiungiDipendentiButton.setForeground(Color.WHITE);
+
+        rimuoviDipendentiButton.setBounds(50,300,200,40);
+        rimuoviDipendentiButton.setBackground(new Color(92, 132, 248));
+        rimuoviDipendentiButton.setForeground(Color.WHITE);
 
         esciButton.setBounds(580,430,100,40);
         esciButton.setBackground(new Color(245, 48, 48));
@@ -59,7 +69,9 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         panel.add(nome);
         panel.add(visualizzaButton);
         panel.add(aggiungiRuoliButton);
+        panel.add(rimuoviRuoliButton);
         panel.add(aggiungiDipendentiButton);
+        panel.add(rimuoviDipendentiButton);
         panel.add(esciButton);
 
         // Aggiunta del pannello alla finestra
@@ -73,6 +85,14 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
                 checkOrganigrammaRuol();
             }
         });
+
+        rimuoviRuoliButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO metodo per rimuozione ruoli
+            }
+        });
+
         visualizzaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -83,7 +103,15 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
         aggiungiDipendentiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                checkOrganigrammaDip();
+                checkOrganigramma();
+            }
+        });
+
+        rimuoviDipendentiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                //TODO metodi per rimozione dipendenti;
             }
         });
 
@@ -104,8 +132,6 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
     private void checkOrganigramma(){
         String filePath = "/home/root_over/Documenti/SynologyDrive/Università/Anno 2/Ingegneria del software/ProgettoNew/untitled/organigramma_data.bin";
         File file = new File(filePath);
-
-
         if (file.exists()){
             try {
                 // Crea un oggetto ObjectInputStream per leggere l'oggetto Organigramma dal file
@@ -211,7 +237,8 @@ public class OrganigrammaGui extends JFrame { //Pagina principale dell'organigra
             }
         }
     }
-
+//TODO invece di fare un check organigramma per ogni oggetto, farne uno singolo passando come oggetto this e in base all'instanza
+//dell'oggetto richiamare la funzione apposita
     private void checkOrganigrammaRuol(){
         String filePath = "/home/root_over/Documenti/SynologyDrive/Università/Anno 2/Ingegneria del software/ProgettoNew/untitled/organigramma_data.bin";
         File file = new File(filePath);

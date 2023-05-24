@@ -221,7 +221,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
 
         //Finestra che contiene combobox e textfileda
         JPanel panel = new JPanel();
-        JLabel campoLabel = new JLabel("Seleziona un campo:");
+        JLabel campoLabel = new JLabel("Seleziona un unità:");
         campoLabel.setForeground(Color.WHITE);
         panel.add(campoLabel);
         panel.add(campoComboBox);
@@ -230,7 +230,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         panel.add(nomeLabel);
         panel.add(nomeTextField);
 
-        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Unità e Inserimento Nome",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -266,7 +266,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
 
         //Finestra che contiene combobox e textfileda
         JPanel panel = new JPanel();
-        JLabel campoLabel = new JLabel("Seleziona campo da modificare:");
+        JLabel campoLabel = new JLabel("Seleziona unità da modificare:");
         campoLabel.setForeground(Color.WHITE);
         panel.add(campoLabel);
         panel.add(campoComboBox);
@@ -275,7 +275,7 @@ public class OrganigrammaPage extends JFrame { //Pagina visualizzazzione grafico
         panel.add(nomeLabel);
         panel.add(nomeTextField);
 
-        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Campo e Inserimento Nome",
+        int result = JOptionPane.showOptionDialog(null, panel, "Selezione Unità e Inserimento Nome",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 
         if (result == JOptionPane.OK_OPTION) {

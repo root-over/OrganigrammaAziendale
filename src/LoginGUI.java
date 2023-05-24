@@ -81,9 +81,6 @@ public class LoginGUI extends JFrame {
     }
 
     private boolean effettuaLogin(String username, char[] password) {
-        // Implementa la logica di autenticazione qui
-        // Restituisci true se il login ha successo, altrimenti false
-        // Esempio di login fittizio: username = "admin", password = "password"
         String inputPassword = new String(password);
         return username.equals("admin") && inputPassword.equals("admin");
     }
